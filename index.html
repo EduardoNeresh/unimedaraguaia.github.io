@@ -67,12 +67,20 @@
             margin-bottom: 15px;
             display: block; 
         }
-        /* NOVO ESTILO: Destaque Verde para Palavras-Chave */
+        /* Destaque Verde para Palavras-Chave */
         .keyword-highlight {
             color: var(--unimed-green);
             font-weight: 900;
         }
-        /* Fim NOVO ESTILO */
+        /* Status do CPF */
+        .cpf-status .found {
+            color: var(--unimed-green);
+            font-weight: 700;
+        }
+        .cpf-status .notfound {
+            color: #dc3545; /* Cor de erro */
+            font-weight: 700;
+        }
 
         .form-control, .form-select, textarea {
             font-size: 1.1rem; 
@@ -325,7 +333,7 @@
     <script src="data_service.js"></script>
 
     <script>
-        // URL DO SEU GOOGLE APP SCRIPT (INSERIDA A URL FORNECIDA PELO USUÁRIO)
+        // URL DO SEU GOOGLE APP SCRIPT (MANTIDA)
         let WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwRZVHDK2wT3qf-5eHXcGyQgel9q1Nbqe1YDbbprIKnc3yyteCMtoOnY6rpkwopNWoE1Q/exec";
 
         const cpfInput = document.getElementById('cpf_participante');
@@ -354,10 +362,6 @@
         };
 
 
-        /**
-         * Exibe o passo (pergunta) atual e atualiza a barra de progresso.
-         * @param {number} step - O número do passo a ser exibido (1 a 10).
-         */
         function showStep(step) {
             
             if (step < 1 || step > totalSteps) return;
@@ -366,26 +370,20 @@
             const el = document.querySelector(`.question[data-step="${step}"]`);
             if (el) el.classList.add('active');
 
-            // Se for o passo de resumo (10), preenche o conteúdo
             if (step === 10) {
                 generateSummary();
             }
 
-            // Calcula o progresso (Total de passos de progresso real é 9, contando o resumo)
             const progress = ((step - 1) / (totalSteps - 1)) * 100; 
             progressBar.style.width = `${progress}%`;
         }
 
 
-        /**
-         * Gera o conteúdo dinâmico da tela de resumo.
-         */
         function generateSummary() {
             const formData = new FormData(document.getElementById('survey-form'));
             let summaryHTML = '';
 
             for (let [name, value] of formData.entries()) {
-                // Pula campos vazios, exceto sugestões
                 if (name !== 'sugestoes_melhoria' && value.trim() === '') continue;
 
                 const label = questionLabels[name] || name;
@@ -398,11 +396,10 @@
                         answerDisplay = 'Nenhuma sugestão registrada.';
                         questionClass = 'summary-sugestao';
                     } else {
-                        answerDisplay = value.replace(/\n/g, '<br>'); // Mantém quebras de linha
+                        answerDisplay = value.replace(/\n/g, '<br>'); 
                         questionClass = 'summary-sugestao';
                     }
                 } else if (name === 'cpf_participante') {
-                     // Formatação simples do CPF
                     answerDisplay = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4'); 
                 }
 
@@ -422,9 +419,7 @@
 
 
         /**
-         * Pesquisa o CPF na base de dados local (do data_service.js).
-         * @param {string} cpf - O CPF (somente números).
-         * @returns {Promise<boolean>} Retorna true se o CPF for válido para avanço, false caso contrário.
+         * Pesquisa o CPF na base de dados local. Agora BLOQUEIA se não encontrar.
          */
         async function lookupCpf(cpf) {
             if (typeof window.lookupCpfFromDatabase !== 'function') {
@@ -441,7 +436,6 @@
             await new Promise(resolve => setTimeout(resolve, 300)); 
 
             try {
-                // Supondo que lookupCpfFromDatabase está definido em data_service.js
                 const data = window.lookupCpfFromDatabase(cpf); 
                 
                 if (data.found) {
@@ -451,10 +445,11 @@
                     cpfFound = true;
                     return true; 
                 } else {
-                    cpfStatusText.innerHTML = `<i class="fas fa-exclamation-triangle"></i> CPF não encontrado. Por favor, corrija ou preencha o nome no próximo passo.`;
+                    // CPF NÃO ENCONTRADO
+                    cpfStatusText.innerHTML = `<i class="fas fa-times-circle"></i> CPF não encontrado na lista de participantes.`;
                     cpfStatusText.className = 'notfound';
                     cpfFound = false;
-                    return true; // Permite avançar mesmo sem encontrar, mas pede o nome
+                    return false; // BLOQUEIA O AVANÇO
                 }
             } catch (e) {
                 console.error("Erro na busca local do CPF:", e);
@@ -478,7 +473,7 @@
             }
         });
 
-        // Ação do botão "Próximo" na Pergunta 1 (CPF)
+        // Ação do botão "Próximo" na Pergunta 1 (CPF) - Com Bloqueio
         document.getElementById('next-q1').addEventListener('click', async () => {
             const rawCpf = cpfInput.value.replace(/\D/g, '');
             
@@ -493,7 +488,9 @@
             if (canAdvance) {
                 showStep(2); 
             } else {
-                alert('Não foi possível verificar o CPF. Tente novamente.');
+                // Mensagem de bloqueio
+                alert('Atenção: Este CPF não está registrado como participante do evento e não pode responder à pesquisa.');
+                cpfInput.focus();
             }
         });
         
@@ -509,30 +506,26 @@
 
         // Ação do botão "Revisar e Finalizar" na Pergunta 9 (Sugestões)
         document.getElementById('next-q9').addEventListener('click', () => {
-            showStep(10); // Vai para a tela de Resumo
+            showStep(10); 
         });
 
         // Lógica para avançar as perguntas genéricas (3 a 8)
         document.querySelectorAll('.next-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const currentStep = parseInt(btn.closest('.question').dataset.step);
-                const nextStep = currentStep + 1;
-                
-                // Validação para campos de seleção
                 const selectField = btn.closest('.question').querySelector('select');
                 if (selectField && selectField.value === '') {
                     alert('Por favor, selecione uma opção para continuar.');
                     return; 
                 }
-                
-                showStep(nextStep);
+                const currentStep = parseInt(btn.closest('.question').dataset.step);
+                showStep(currentStep + 1);
             });
         });
 
         // Lógica para voltar
         document.querySelectorAll('.back-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const prevStep = parseInt(btn.dataset.prevStep);
+                const prevStep = parseInt(btn.dataset.prev-step);
                 showStep(prevStep);
             });
         });
@@ -547,8 +540,6 @@
 
             const form = e.target;
             const formData = new FormData(form);
-            
-            // Converte os dados do formulário para o formato URLSearchParams
             const params = new URLSearchParams(formData);
 
             try {
@@ -557,7 +548,6 @@
                     body: params
                 });
 
-                // O Apps Script retorna JSON
                 const result = await response.json();
                 
                 if (result.status === 'SUCCESS') {
@@ -577,14 +567,14 @@
                         </button>
                     `;
                 } else {
-                    // FALHA NO SCRIPT: Mostra alerta de erro
+                    // FALHA NO SCRIPT
                     alert('Erro ao enviar dados para a planilha: ' + result.message);
                     console.error('Apps Script Error:', result.message);
                     submitButton.disabled = false;
                     submitButton.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Respostas';
                 }
             } catch (error) {
-                // FALHA DE CONEXÃO: Mostra alerta de erro
+                // FALHA DE CONEXÃO
                 alert('Erro de conexão ou rede. Verifique a URL do Apps Script.');
                 console.error('Network or Fetch Error:', error);
                 submitButton.disabled = false;
