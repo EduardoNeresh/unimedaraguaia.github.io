@@ -21,30 +21,33 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 30px; 
         }
         .survey-container {
-            max-width: 750px;
+            max-width: 800px; 
             width: 100%;
             background: #fff;
-            padding: 40px;
-            border-radius: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            padding: 50px 60px; 
+            border-radius: 30px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3); 
             position: relative;
             text-align: center;
+            border-top: 8px solid var(--unimed-green); 
         }
         .logo {
-            max-width: 180px;
-            margin-bottom: 20px;
+            max-width: 200px; 
+            margin-bottom: 25px;
         }
         h2 {
             font-weight: 900;
             color: var(--unimed-green);
+            font-size: 2.2rem; 
         }
         h4 {
             font-weight: 700;
             color: var(--unimed-text-dark);
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            font-size: 1.3rem; 
         }
         .question {
             display: none;
@@ -54,17 +57,41 @@
             display: block;
         }
         @keyframes fadeIn {
-            from {opacity:0; transform: translateY(15px);}
+            from {opacity:0; transform: translateY(20px);}
             to {opacity:1; transform: translateY(0);}
         }
         .form-label {
             font-weight: 700;
             color: var(--unimed-text-dark);
+            font-size: 1.1rem; 
+            margin-bottom: 15px;
+            display: block; 
+        }
+        /* NOVO ESTILO: Destaque Verde para Palavras-Chave */
+        .keyword-highlight {
+            color: var(--unimed-green);
+            font-weight: 900;
+        }
+        /* Fim NOVO ESTILO */
+
+        .form-control, .form-select, textarea {
+            font-size: 1.1rem; 
+            padding: 15px 20px;
+            border-radius: 12px;
+            border-color: #ddd;
         }
         .btn {
-            border-radius: 30px;
-            padding: 10px 25px;
-            font-weight: 600;
+            border-radius: 40px; 
+            padding: 12px 35px; 
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
         }
         .btn-primary {
             background-color: var(--unimed-green);
@@ -75,7 +102,7 @@
         }
         .btn-secondary {
             background-color: var(--highlight-yellow);
-            color: #000;
+            color: var(--unimed-text-dark);
             border: none;
         }
         .btn-secondary:hover {
@@ -86,28 +113,66 @@
             border: none;
         }
         .progress {
-            height: 12px;
-            margin-bottom: 20px;
+            height: 15px; 
+            margin-bottom: 30px;
             border-radius: 10px;
         }
         .progress-bar {
             background-color: var(--unimed-green);
         }
         .cpf-status {
-            margin-top: 10px;
-            font-size: 0.9rem;
+            margin-top: 15px;
+            font-size: 1rem; 
             font-weight: 500;
         }
-        .cpf-status .found {color: var(--unimed-green); font-weight: 700;}
-        .cpf-status .notfound {color: #dc3545;}
-        .cpf-status .loading {color: #0d6efd;}
+        .cpf-status i {
+            margin-right: 5px;
+        }
+
+        /* Centraliza os botões de navegação */
+        .navigation-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 25px;
+            justify-content: center; 
+            flex-wrap: wrap;
+        }
+
+        /* Estilo para a tela de resumo */
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed #eee;
+            text-align: left;
+        }
+        .summary-question {
+            font-weight: 500;
+            color: var(--unimed-text-dark);
+            flex: 1;
+            padding-right: 20px;
+        }
+        .summary-answer {
+            font-weight: 700;
+            color: var(--unimed-green);
+            max-width: 40%;
+            text-align: right;
+        }
+        .summary-sugestao {
+            display: block;
+            margin-top: 5px;
+            font-style: italic;
+            color: #777;
+            font-size: 0.95rem;
+        }
     </style>
 </head>
 <body>
     <div class="survey-container">
         <img src="https://www.unimed.coop.br/site/image/layout_set_logo?img_id=23193551&t=1759328081981" class="logo mb-3" alt="Logo Unimed Araguaia">
         <h2>Pesquisa de Satisfação 🎉</h2>
-        <h4>Evento: Dia dos Médicos | Sua Opinião é Vital!</h4>
+        <h4 id="survey-subtitle">Evento: Dia dos Médicos | Sua Opinião é Vital!</h4>
 
         <div class="progress">
             <div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
@@ -116,25 +181,27 @@
         <form id="survey-form">
 
             <div class="question active" data-step="1" data-name="CPF">
-                <label class="form-label"><i class="fas fa-id-card"></i> 1. Digite seu CPF:</label>
-                <input type="tel" class="form-control" name="cpf_participante" id="cpf_participante" placeholder="Somente números" maxlength="11" required>
+                <label class="form-label"><i class="fas fa-id-card"></i> 1. Digite seu <span class="keyword-highlight">CPF</span>:</label>
+                <input type="tel" class="form-control" name="cpf_participante" id="cpf_participante" placeholder="Somente números (11 dígitos)" maxlength="11" required>
                 <div class="cpf-status" id="cpf-status">
                     <i class="fas fa-search"></i> <span id="cpf-status-text">Aguardando 11 dígitos...</span>
                 </div>
-                <button type="button" class="btn btn-primary mt-3" id="next-q1">Próximo</button>
+                <div class="navigation-buttons">
+                    <button type="button" class="btn btn-primary" id="next-q1">Próximo</button>
+                </div>
             </div>
 
             <div class="question" data-step="2" data-name="Nome">
-                <label class="form-label"><i class="fas fa-user-circle"></i> 2. Qual o seu nome?</label>
+                <label class="form-label"><i class="fas fa-user-circle"></i> 2. Qual o seu <span class="keyword-highlight">nome</span>?</label>
                 <input type="text" class="form-control" name="nome_participante" id="nome_participante" placeholder="Digite seu Nome Completo" required>
-                <div class="d-flex gap-2 mt-3">
+                <div class="navigation-buttons">
                     <button type="button" class="btn btn-secondary back-btn" data-prev-step="1">Voltar</button>
                     <button type="button" class="btn btn-primary" id="next-q2">Próximo</button>
                 </div>
             </div>
 
-            <div class="question" data-step="3" data-name="Organização">
-                <label class="form-label"><i class="fas fa-star"></i> 3. Como avalia a organização geral do evento?</label>
+            <div class="question" data-step="3" data-name="Organizacao">
+                <label class="form-label"><i class="fas fa-star"></i> 3. Como você avalia a <span class="keyword-highlight">organização geral</span> do evento?</label>
                 <select class="form-select" name="organizacao" required>
                     <option value="">Selecione</option>
                     <option>Péssimo</option>
@@ -143,15 +210,15 @@
                     <option>Bom</option>
                     <option>Excelente</option>
                 </select>
-                <div class="d-flex gap-2 mt-3">
+                <div class="navigation-buttons">
                     <button type="button" class="btn btn-secondary back-btn" data-prev-step="2">Voltar</button>
                     <button type="button" class="btn btn-primary next-btn" data-next-step="4">Próximo</button>
                 </div>
             </div>
 
             <div class="question" data-step="4" data-name="Local">
-                <label class="form-label"><i class="fas fa-map-marker-alt"></i> 4. Como avalia o local do evento?</label>
-                <select class="form-select" name="local" required>
+                <label class="form-label"><i class="fas fa-map-marked-alt"></i> 4. Como avalia a qualidade do <span class="keyword-highlight">local/estrutura</span> do evento?</label>
+                <select class="form-select" name="local_estrutura" required>
                     <option value="">Selecione</option>
                     <option>Péssimo</option>
                     <option>Ruim</option>
@@ -159,47 +226,47 @@
                     <option>Bom</option>
                     <option>Excelente</option>
                 </select>
-                <div class="d-flex gap-2 mt-3">
+                <div class="navigation-buttons">
                     <button type="button" class="btn btn-secondary back-btn" data-prev-step="3">Voltar</button>
                     <button type="button" class="btn btn-primary next-btn" data-next-step="5">Próximo</button>
                 </div>
             </div>
 
-            <div class="question" data-step="5" data-name="Alimentação">
-                <label class="form-label"><i class="fas fa-utensils"></i> 5. Como avalia a alimentação oferecida?</label>
-                <select class="form-select" name="alimentacao" required>
+            <div class="question" data-step="5" data-name="Comida">
+                <label class="form-label"><i class="fas fa-utensils"></i> 5. Como você avalia a qualidade da <span class="keyword-highlight">comida</span> servida?</label>
+                <select class="form-select" name="comida" required>
                     <option value="">Selecione</option>
                     <option>Péssimo</option>
                     <option>Ruim</option>
                     <option>Regular</option>
-                    <option>Bom</option>
+                    <option>Boa</option>
                     <option>Excelente</option>
                 </select>
-                <div class="d-flex gap-2 mt-3">
+                <div class="navigation-buttons">
                     <button type="button" class="btn btn-secondary back-btn" data-prev-step="4">Voltar</button>
                     <button type="button" class="btn btn-primary next-btn" data-next-step="6">Próximo</button>
                 </div>
             </div>
 
-            <div class="question" data-step="6" data-name="Palestras">
-                <label class="form-label"><i class="fas fa-chalkboard-teacher"></i> 6. Como avalia a qualidade das palestras?</label>
-                <select class="form-select" name="palestras" required>
+            <div class="question" data-step="6" data-name="Bebidas">
+                <label class="form-label"><i class="fas fa-glass-cheers"></i> 6. Como avalia as <span class="keyword-highlight">bebidas</span> servidas?</label>
+                <select class="form-select" name="bebidas" required>
                     <option value="">Selecione</option>
                     <option>Péssimo</option>
                     <option>Ruim</option>
                     <option>Regular</option>
-                    <option>Bom</option>
-                    <option>Excelente</option>
+                    <option>Boas</option>
+                    <option>Excelentes</option>
                 </select>
-                <div class="d-flex gap-2 mt-3">
+                <div class="navigation-buttons">
                     <button type="button" class="btn btn-secondary back-btn" data-prev-step="5">Voltar</button>
                     <button type="button" class="btn btn-primary next-btn" data-next-step="7">Próximo</button>
                 </div>
             </div>
 
-            <div class="question" data-step="7" data-name="Atrações">
-                <label class="form-label"><i class="fas fa-music"></i> 7. Como avalia as atrações musicais e culturais?</label>
-                <select class="form-select" name="atracoes" required>
+            <div class="question" data-step="7" data-name="Musica">
+                <label class="form-label"><i class="fas fa-music"></i> 7. Como você avalia a <span class="keyword-highlight">música/entretenimento</span>?</label>
+                <select class="form-select" name="musica_entretenimento" required>
                     <option value="">Selecione</option>
                     <option>Péssimo</option>
                     <option>Ruim</option>
@@ -207,15 +274,15 @@
                     <option>Bom</option>
                     <option>Excelente</option>
                 </select>
-                <div class="d-flex gap-2 mt-3">
+                <div class="navigation-buttons">
                     <button type="button" class="btn btn-secondary back-btn" data-prev-step="6">Voltar</button>
                     <button type="button" class="btn btn-primary next-btn" data-next-step="8">Próximo</button>
                 </div>
             </div>
 
-            <div class="question" data-step="8" data-name="Atendimento">
-                <label class="form-label"><i class="fas fa-users"></i> 8. Como avalia o atendimento da equipe da Unimed no evento?</label>
-                <select class="form-select" name="atendimento" required>
+            <div class="question" data-step="8" data-name="Palestrante">
+                <label class="form-label"><i class="fas fa-chalkboard-teacher"></i> 8. Como avalia o <span class="keyword-highlight">conteúdo e a performance do palestrante</span>?</label>
+                <select class="form-select" name="palestrante_performance" required>
                     <option value="">Selecione</option>
                     <option>Péssimo</option>
                     <option>Ruim</option>
@@ -223,34 +290,35 @@
                     <option>Bom</option>
                     <option>Excelente</option>
                 </select>
-                <div class="d-flex gap-2 mt-3">
+                <div class="navigation-buttons">
                     <button type="button" class="btn btn-secondary back-btn" data-prev-step="7">Voltar</button>
                     <button type="button" class="btn btn-primary next-btn" data-next-step="9">Próximo</button>
                 </div>
             </div>
 
-            <div class="question" data-step="9" data-name="Expectativas">
-                <label class="form-label"><i class="fas fa-bullseye"></i> 9. O evento atendeu às suas expectativas?</label>
-                <select class="form-select" name="expectativas" required>
-                    <option value="">Selecione</option>
-                    <option>Sim</option>
-                    <option>Parcialmente</option>
-                    <option>Não</option>
-                </select>
-                <div class="d-flex gap-2 mt-3">
+            <div class="question" data-step="9" data-name="Sugestoes">
+                <label class="form-label"><i class="fas fa-comment-dots"></i> 9. O que poderia ser <span class="keyword-highlight">melhorado para os próximos eventos</span>?</label>
+                <textarea class="form-control" name="sugestoes_melhoria" rows="4" placeholder="Deixe suas sugestões de melhoria aqui..."></textarea>
+                <div class="navigation-buttons">
                     <button type="button" class="btn btn-secondary back-btn" data-prev-step="8">Voltar</button>
-                    <button type="button" class="btn btn-primary next-btn" data-next-step="10">Próximo</button>
+                    <button type="button" class="btn btn-primary" id="next-q9">Revisar e Finalizar</button>
                 </div>
             </div>
 
-            <div class="question" data-step="10" data-name="Sugestões">
-                <label class="form-label"><i class="fas fa-comment-dots"></i> 10. Deixe suas sugestões para próximos eventos:</label>
-                <textarea class="form-control" name="sugestoes" rows="3"></textarea>
-                <div class="d-flex gap-2 mt-3">
-                    <button type="button" class="btn btn-secondary back-btn" data-prev-step="9">Voltar</button>
-                    <button type="submit" class="btn btn-success">Enviar Respostas</button>
+            <div class="question" data-step="10" data-name="Resumo">
+                <h3 class="text-center" style="font-weight: 700; color: var(--unimed-text-dark); margin-bottom: 25px;">
+                    <i class="fas fa-clipboard-check"></i> Revise Suas Respostas
+                </h3>
+                <div id="summary-content" class="text-start">
+                    </div>
+                <div class="navigation-buttons">
+                    <button type="button" class="btn btn-secondary back-btn" data-prev-step="9">Voltar para Edição</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-paper-plane"></i> Enviar Respostas
+                    </button>
                 </div>
             </div>
+
         </form>
     </div>
 
@@ -265,75 +333,142 @@
         const cpfStatusText = document.getElementById('cpf-status-text');
         const questions = document.querySelectorAll('.question');
         const progressBar = document.getElementById('progress-bar');
-        const totalSteps = 10; // Total de perguntas na pesquisa
+        const summaryContent = document.getElementById('summary-content');
+        const totalSteps = 10; // Total de passos (2 dados pessoais + 7 perguntas + 1 resumo)
 
-        let cpfFound = false; // Variável para controlar se o CPF foi encontrado
+        let cpfFound = false; 
+
+        /**
+         * Mapeamento de nomes internos para nomes de exibição no resumo.
+         */
+        const questionLabels = {
+            'cpf_participante': 'CPF',
+            'nome_participante': 'Nome',
+            'organizacao': 'Organização Geral',
+            'local_estrutura': 'Qualidade do Local/Estrutura',
+            'comida': 'Qualidade da Comida',
+            'bebidas': 'Qualidade das Bebidas',
+            'musica_entretenimento': 'Música/Entretenimento',
+            'palestrante_performance': 'Conteúdo e Performance do Palestrante',
+            'sugestoes_melhoria': 'Sugestões de Melhoria'
+        };
+
 
         /**
          * Exibe o passo (pergunta) atual e atualiza a barra de progresso.
          * @param {number} step - O número do passo a ser exibido (1 a 10).
          */
         function showStep(step) {
-            const currentStep = parseInt(document.querySelector('.question.active')?.dataset.step || '1');
             
-            // Validação de segurança simples
             if (step < 1 || step > totalSteps) return;
 
             questions.forEach(q => q.classList.remove('active'));
             const el = document.querySelector(`.question[data-step="${step}"]`);
             if (el) el.classList.add('active');
 
-            // Calcula o progresso (ex: passo 1 de 10 = 0%; passo 2 de 10 = 10%... passo 10 de 10 = 90%)
-            const progress = ((step - 1) / totalSteps) * 100;
+            // Se for o passo de resumo (10), preenche o conteúdo
+            if (step === 10) {
+                generateSummary();
+            }
+
+            // Calcula o progresso (Total de passos de progresso real é 9, contando o resumo)
+            const progress = ((step - 1) / (totalSteps - 1)) * 100; 
             progressBar.style.width = `${progress}%`;
         }
 
+
         /**
-         * Pesquisa o CPF na base de dados local (simula a chamada ao Google App Script).
+         * Gera o conteúdo dinâmico da tela de resumo.
+         */
+        function generateSummary() {
+            const formData = new FormData(document.getElementById('survey-form'));
+            let summaryHTML = '';
+
+            for (let [name, value] of formData.entries()) {
+                // Pula campos vazios, exceto sugestões
+                if (name !== 'sugestoes_melhoria' && value.trim() === '') continue;
+
+                const label = questionLabels[name] || name;
+                
+                let answerDisplay = value;
+                let questionClass = '';
+                
+                if (name === 'sugestoes_melhoria') {
+                    if (value.trim() === '') {
+                        answerDisplay = 'Nenhuma sugestão registrada.';
+                        questionClass = 'summary-sugestao';
+                    } else {
+                        answerDisplay = value.replace(/\n/g, '<br>'); // Mantém quebras de linha
+                        questionClass = 'summary-sugestao';
+                    }
+                } else if (name === 'cpf_participante') {
+                     // Formatação simples do CPF
+                    answerDisplay = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4'); 
+                }
+
+                summaryHTML += `
+                    <div class="summary-item">
+                        <span class="summary-question">${label}:</span>
+                        <span class="summary-answer">
+                            ${name === 'sugestoes_melhoria' ? '' : answerDisplay}
+                        </span>
+                    </div>
+                    ${name === 'sugestoes_melhoria' ? `<div class="summary-item"><span class="${questionClass}">${answerDisplay}</span></div>` : ''}
+                `;
+            }
+
+            summaryContent.innerHTML = summaryHTML;
+        }
+
+
+        /**
+         * Pesquisa o CPF na base de dados local (do data_service.js).
          * @param {string} cpf - O CPF (somente números).
          * @returns {Promise<boolean>} Retorna true se o CPF for válido para avanço, false caso contrário.
          */
         async function lookupCpf(cpf) {
+            if (typeof window.lookupCpfFromDatabase !== 'function') {
+                cpfStatusText.textContent = 'Erro: Base de dados não carregada (falha no data_service.js).';
+                cpfStatusText.className = 'notfound';
+                return false;
+            }
+
             cpfStatusText.textContent = 'Pesquisando na lista de cooperados...';
             cpfStatusText.className = 'loading';
             cpfFound = false;
-            nomeInput.value = ''; // Limpa o nome enquanto pesquisa
+            nomeInput.value = ''; 
 
-            // Adiciona um pequeno delay para simular o tempo de espera da rede (opcional)
             await new Promise(resolve => setTimeout(resolve, 300)); 
 
             try {
-                // ** AQUI OCORRE A MUDANÇA: Chama a função do arquivo data_service.js **
                 const data = window.lookupCpfFromDatabase(cpf); 
                 
                 if (data.found) {
                     cpfStatusText.innerHTML = `<i class="fas fa-check-circle"></i> Médico encontrado: <span class="found">${data.name}</span>`;
                     cpfStatusText.className = 'found';
-                    nomeInput.value = data.name; // Preenche o nome automaticamente
+                    nomeInput.value = data.name; 
                     cpfFound = true;
-                    return true; // CPF encontrado
+                    return true; 
                 } else {
                     cpfStatusText.innerHTML = `<i class="fas fa-exclamation-triangle"></i> CPF não encontrado. Por favor, corrija ou preencha o nome no próximo passo.`;
                     cpfStatusText.className = 'notfound';
                     cpfFound = false;
-                    return true; // Permitir avanço, mas sem preenchimento automático
+                    return true; 
                 }
             } catch (e) {
                 console.error("Erro na busca local do CPF:", e);
                 cpfStatusText.textContent = 'Erro na busca local. Tente novamente.';
                 cpfStatusText.className = 'notfound';
-                return false; // Bloquear avanço em caso de erro crítico
+                return false; 
             }
         }
 
         // Ações ao digitar no campo CPF
         cpfInput.addEventListener('input', e => {
-            // Limpa e formata o CPF
             const raw = e.target.value.replace(/\D/g, '').substring(0, 11);
-            e.target.value = raw; // Força a exibição apenas de números (até 11)
+            e.target.value = raw; 
             
             if (raw.length === 11) {
-                // Quando 11 dígitos são atingidos, dispara a pesquisa automática
                 lookupCpf(raw);
             } else {
                 cpfStatusText.textContent = 'Aguardando 11 dígitos...';
@@ -352,11 +487,10 @@
                 return;
             }
 
-            // Garante que o lookup ocorreu antes de avançar
             const canAdvance = await lookupCpf(rawCpf);
             
             if (canAdvance) {
-                showStep(2); // Avança para a pergunta do Nome
+                showStep(2); 
             } else {
                 alert('Não foi possível verificar o CPF. Tente novamente.');
             }
@@ -372,13 +506,18 @@
             showStep(3);
         });
 
-        // Lógica para avançar as perguntas genéricas (3 a 10)
+        // Ação do botão "Revisar e Finalizar" na Pergunta 9 (Sugestões)
+        document.getElementById('next-q9').addEventListener('click', () => {
+            showStep(10); // Vai para a tela de Resumo
+        });
+
+        // Lógica para avançar as perguntas genéricas (3 a 8)
         document.querySelectorAll('.next-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const currentStep = parseInt(btn.closest('.question').dataset.step);
                 const nextStep = currentStep + 1;
                 
-                // Simples validação para campos de seleção
+                // Validação para campos de seleção
                 const selectField = btn.closest('.question').querySelector('select');
                 if (selectField && selectField.value === '') {
                     alert('Por favor, selecione uma opção para continuar.');
@@ -397,11 +536,26 @@
             });
         });
 
-        // Lógica de Envio do Formulário
+        // Lógica de Envio do Formulário (Simulação)
         document.getElementById('survey-form').addEventListener('submit', e => {
             e.preventDefault();
-            // Lógica de Envio (usaria o WEB_APP_URL para enviar para o Google App Script)
-            alert("Sucesso! O formulário está pronto para ser conectado ao Google App Script.");
+            
+            // SIMULAÇÃO DE ENVIO COM TELA DE SUCESSO
+            const currentTitle = document.querySelector('h2').textContent;
+            document.querySelector('.survey-container').innerHTML = `
+                <img src="https://www.unimed.coop.br/site/image/layout_set_logo?img_id=23193551&t=1759328081981" class="logo mb-3" alt="Logo Unimed Araguaia">
+                <h2 style="color: var(--unimed-green);">${currentTitle}</h2>
+                <h3 class="text-success" style="font-weight: 700; margin-top: 30px;">
+                    <i class="fas fa-heart"></i> Pesquisa Finalizada com Sucesso!
+                </h3>
+                <p style="font-size: 1.1rem; color: var(--unimed-text-dark); margin-top: 20px;">
+                    Agradecemos imensamente a sua participação e feedback. Sua opinião é vital para melhorarmos nossos próximos eventos.
+                </p>
+                <button class="btn btn-primary mt-4" onclick="window.location.reload();">
+                    <i class="fas fa-redo"></i> Iniciar Nova Pesquisa
+                </button>
+            `;
+            
         });
 
         // Inicializa no primeiro passo
