@@ -1,418 +1,555 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
-  <meta charset="UTF-8">
+  <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pesquisa de Satisfação - Dia dos Médicos | Unimed Araguaia</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
+    /* VARIÁVEIS DE CORES UNIMED (PALETA VERDE) */
     :root {
-      --unimed-green: #00A859;
-      --unimed-light-blue: #E6F3FA;
-      --unimed-text-dark: #2c3e50;
-      --highlight-yellow: #FFD700;
+      --unimed-verde-principal: #00994D; /* Verde principal da Unimed */
+      --unimed-verde-escuro: #007A3E; /* Um verde mais escuro para destaque */
+      --unimed-verde-claro: #E8F5E9; /* Fundo suave para os blocos */
+      --unimed-bg-gradiente: linear-gradient(135deg, #a8e89f 0%, #4caf50 100%); /* Gradiente de fundo */
+      --text-color: #333;
+      --border-color-light: #C8E6C9; /* Borda mais clara para contraste */
     }
+    
     body {
-      font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, var(--unimed-green) 0%, var(--unimed-light-blue) 100%);
-      min-height: 100vh;
+      font-family: 'Roboto', Arial, sans-serif;
+      background: var(--unimed-bg-gradiente); 
       display: flex;
-      align-items: center;
       justify-content: center;
-      padding: 20px;
+      align-items: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 40px 20px;
     }
-    .survey-container {
-      max-width: 750px;
+    .container {
+      max-width: 600px;
       width: 100%;
-      background: #fff;
-      padding: 40px;
-      border-radius: 25px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.25);
-      position: relative;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); 
+      transition: all 0.3s ease-in-out;
+    }
+    .unimed-header {
       text-align: center;
-    }
-    .logo {
-      max-width: 180px;
-      margin-bottom: 20px;
-    }
-    h2 {
-      font-weight: 900;
-      color: var(--unimed-green);
-    }
-    h4 {
-      font-weight: 700;
-      color: var(--unimed-text-dark);
       margin-bottom: 30px;
     }
-    .question {
-      display: none;
-      animation: fadeIn 0.8s ease-in-out;
+    .unimed-logo-container {
+        margin-bottom: 15px;
+        text-align: center;
     }
-    .question.active {
-      display: block;
+    .unimed-logo-container img {
+        max-width: 180px; 
+        height: auto;
+        display: block;
+        margin: 0 auto;
+        border-radius: 5px;
     }
-    @keyframes fadeIn {
-      from {opacity:0; transform: translateY(15px);}
-      to {opacity:1; transform: translateY(0);}
-    }
-    .form-label {
+    .unimed-header h1 {
+      font-size: 26px;
+      color: var(--unimed-verde-principal); /* Título em verde principal */
       font-weight: 700;
-      color: var(--unimed-text-dark);
+      margin: 10px 0 5px 0;
     }
-    .btn {
-      border-radius: 30px;
-      padding: 10px 25px;
-      font-weight: 600;
+    .unimed-header h2 {
+      font-size: 16px;
+      color: var(--unimed-verde-escuro); /* Subtítulo em verde escuro */
+      font-weight: 400;
+      margin-top: 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
     }
-    .btn-primary {
-      background-color: var(--unimed-green);
+
+    .form-group {
+      margin-bottom: 25px;
+      padding: 20px;
+      border: 1px solid var(--border-color-light); /* Borda mais clara */
+      border-radius: 12px;
+      background-color: var(--unimed-verde-claro); 
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+    .form-group.identification {
+      background-color: #fff;
+      border: 2px solid var(--unimed-verde-principal); /* Borda da identificação em verde principal */
+      text-align: center;
+    }
+    
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: var(--unimed-verde-escuro); /* Texto da label em verde escuro */
+      font-size: 18px;
+    }
+    input[type="text"] {
+      padding: 15px;
+      border: 2px solid var(--border-color-light); /* Borda do input em verde claro */
+      border-radius: 8px;
+      font-size: 18px;
+      text-align: center;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    input[type="text"]:focus {
+        border-color: var(--unimed-verde-principal); /* Foco em verde principal */
+    }
+    textarea {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid var(--border-color-light); /* Borda do textarea em verde claro */
+        border-radius: 8px;
+        font-size: 16px;
+        box-sizing: border-box;
+        margin-top: 5px;
+    }
+    textarea:focus {
+        border-color: var(--unimed-verde-principal); /* Foco em verde principal */
+        outline: none;
+    }
+    
+    .btn-action {
+      background-color: var(--unimed-verde-principal); /* Botão em verde principal */
+      color: white;
+      padding: 14px 25px;
       border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 700;
+      width: 100%;
+      margin-top: 15px;
+      transition: background-color 0.3s, transform 0.1s;
     }
-    .btn-primary:hover {
-      background-color: #008f4c;
+    .btn-action:hover {
+      background-color: var(--unimed-verde-escuro); /* Hover em verde escuro */
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
-    .btn-secondary {
-      background-color: var(--highlight-yellow);
-      color: #000;
-      border: none;
+    .btn-action:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
     }
-    .btn-secondary:hover {
-      background-color: #e6c200;
+    
+    .message {
+      text-align: center;
+      padding: 20px;
+      margin-top: 25px;
+      border-radius: 6px;
+      display: none;
+      font-weight: 700;
+      font-size: 18px;
     }
-    .btn-success {
-      background-color: #28a745;
-      border: none;
-    }
-    .progress {
-      height: 12px;
-      margin-bottom: 20px;
-      border-radius: 10px;
-    }
-    .progress-bar {
-      background-color: var(--unimed-green);
-    }
-    .cpf-status {
+    .message.error {
+      background: none;
+      color: #cc0000;
+      font-weight: 700;
+      text-align: center;
+      padding: 5px;
       margin-top: 10px;
-      font-size: 0.9rem;
+      font-size: 1em;
+      display: none;
     }
-    .cpf-status .found {color: var(--unimed-green);}
-    .cpf-status .notfound {color: #dc3545;}
-    .cpf-status .loading {color: #0d6efd;}
+    .message.success {
+      background-color: var(--unimed-verde-claro); 
+      color: var(--unimed-verde-principal); /* Mensagem de sucesso em verde principal */
+      border: 2px solid var(--unimed-verde-principal); /* Borda em verde principal */
+      font-size: 1.2em;
+    }
+    .loading {
+        display: none;
+        text-align: center;
+        color: var(--unimed-verde-principal); /* Cor do loading em verde principal */
+        margin-top: 10px;
+    }
+    #nomeMedicoDisplay {
+      font-weight: 700;
+      color: var(--unimed-verde-principal); /* Nome do médico em verde principal */
+      margin-top: 15px;
+      font-size: 1.1em;
+      display: none;
+      padding: 5px 0;
+    }
+    .hidden-content {
+      display: none;
+    }
+    
+    .radio-group {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 5px; 
+    }
+    .radio-option {
+      flex: 1;
+      min-width: 15%; 
+      text-align: center;
+    }
+    .radio-option label {
+      font-size: 14px;
+      padding: 10px 5px;
+      border: 1px solid var(--unimed-verde-principal); /* Borda da opção em verde principal */
+      border-radius: 6px;
+      color: var(--unimed-verde-principal); /* Texto da opção em verde principal */
+      background-color: #fff;
+      font-weight: 400;
+      margin: 0;
+      transition: all 0.2s ease;
+    }
+    .radio-option input[type="radio"]:checked + label {
+      background-color: var(--unimed-verde-principal); /* Selecionado em verde principal */
+      color: #fff;
+      border-color: var(--unimed-verde-principal);
+      font-weight: 700;
+    }
+    .radio-option label:hover:not(:checked) {
+        background-color: var(--unimed-verde-claro); /* Hover suave em verde claro */
+        color: var(--unimed-verde-escuro);
+    }
+
+    /* Responsividade */
+    @media (max-width: 600px) {
+        .container {
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .radio-group {
+            flex-direction: column;
+            gap: 5px;
+        }
+        .radio-option {
+            min-width: 100%;
+        }
+    }
   </style>
 </head>
 <body>
-  <div class="survey-container">
-    <img src="https://www.unimed.coop.br/site/image/layout_set_logo?img_id=23193551&t=1759328081981" class="logo mb-3" alt="Logo Unimed Araguaia">
-    <h2>Pesquisa de Satisfação 🎉</h2>
-    <h4>Evento: Dia dos Médicos | Sua Opinião é Vital!</h4>
 
-    <div class="progress">
-      <div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
+<div class="container">
+  <div class="unimed-header">
+    <div class="unimed-logo-container">
+      <img src="https://www.unimed.coop.br/site/image/layout_set_logo?img_id=23193551&t=1759762919807" alt="Logo Unimed Araguaia">
     </div>
-
-    <form id="survey-form">
-
-      <div class="question active" data-step="1" data-name="CPF">
-        <label class="form-label"><i class="fas fa-id-card"></i> 1. Digite seu CPF:</label>
-        <input type="tel" class="form-control" name="cpf_participante" id="cpf_participante" placeholder="Somente números" maxlength="11" required>
-        <div class="cpf-status" id="cpf-status">
-          <i class="fas fa-search"></i> <span id="cpf-status-text">Aguardando CPF...</span>
-        </div>
-        <button type="button" class="btn btn-primary mt-3" id="next-q1">Próximo</button>
-      </div>
-
-      <div class="question" data-step="2" data-name="Nome">
-        <label class="form-label"><i class="fas fa-user-circle"></i> 2. Qual o seu nome?</label>
-        <input type="text" class="form-control" name="nome_participante" id="nome_participante" placeholder="Digite seu Nome Completo" required>
-        <div class="d-flex gap-2 mt-3">
-          <button type="button" class="btn btn-secondary back-btn" data-prev-step="1">Voltar</button>
-          <button type="button" class="btn btn-primary" id="next-q2">Próximo</button>
-        </div>
-      </div>
-
-      <div class="question" data-step="3" data-name="Organização">
-        <label class="form-label"><i class="fas fa-star"></i> 3. Como avalia a organização geral do evento?</label>
-        <select class="form-select" name="organizacao" required>
-          <option value="">Selecione</option>
-          <option>Péssimo</option>
-          <option>Ruim</option>
-          <option>Regular</option>
-          <option>Bom</option>
-          <option>Excelente</option>
-        </select>
-        <div class="d-flex gap-2 mt-3">
-          <button type="button" class="btn btn-secondary back-btn" data-prev-step="2">Voltar</button>
-          <button type="button" class="btn btn-primary next-btn">Próximo</button>
-        </div>
-      </div>
-
-      <div class="question" data-step="4" data-name="Local">
-        <label class="form-label"><i class="fas fa-map-marker-alt"></i> 4. Como avalia o local do evento?</label>
-        <select class="form-select" name="local" required>
-          <option value="">Selecione</option>
-          <option>Péssimo</option>
-          <option>Ruim</option>
-          <option>Regular</option>
-          <option>Bom</option>
-          <option>Excelente</option>
-        </select>
-        <div class="d-flex gap-2 mt-3">
-          <button type="button" class="btn btn-secondary back-btn" data-prev-step="3">Voltar</button>
-          <button type="button" class="btn btn-primary next-btn">Próximo</button>
-        </div>
-      </div>
-
-      <div class="question" data-step="5" data-name="Alimentação">
-        <label class="form-label"><i class="fas fa-utensils"></i> 5. Como avalia a alimentação oferecida?</label>
-        <select class="form-select" name="alimentacao" required>
-          <option value="">Selecione</option>
-          <option>Péssimo</option>
-          <option>Ruim</option>
-          <option>Regular</option>
-          <option>Bom</option>
-          <option>Excelente</option>
-        </select>
-        <div class="d-flex gap-2 mt-3">
-          <button type="button" class="btn btn-secondary back-btn" data-prev-step="4">Voltar</button>
-          <button type="button" class="btn btn-primary next-btn">Próximo</button>
-        </div>
-      </div>
-
-      <div class="question" data-step="6" data-name="Palestras">
-        <label class="form-label"><i class="fas fa-chalkboard-teacher"></i> 6. Como avalia a qualidade das palestras?</label>
-        <select class="form-select" name="palestras" required>
-          <option value="">Selecione</option>
-          <option>Péssimo</option>
-          <option>Ruim</option>
-          <option>Regular</option>
-          <option>Bom</option>
-          <option>Excelente</option>
-        </select>
-        <div class="d-flex gap-2 mt-3">
-          <button type="button" class="btn btn-secondary back-btn" data-prev-step="5">Voltar</button>
-          <button type="button" class="btn btn-primary next-btn">Próximo</button>
-        </div>
-      </div>
-
-      <div class="question" data-step="7" data-name="Atrações">
-        <label class="form-label"><i class="fas fa-music"></i> 7. Como avalia as atrações musicais e culturais?</label>
-        <select class="form-select" name="atracoes" required>
-          <option value="">Selecione</option>
-          <option>Péssimo</option>
-          <option>Ruim</option>
-          <option>Regular</option>
-          <option>Bom</option>
-          <option>Excelente</option>
-        </select>
-        <div class="d-flex gap-2 mt-3">
-          <button type="button" class="btn btn-secondary back-btn" data-prev-step="6">Voltar</button>
-          <button type="button" class="btn btn-primary next-btn">Próximo</button>
-        </div>
-      </div>
-
-      <div class="question" data-step="8" data-name="Atendimento">
-        <label class="form-label"><i class="fas fa-users"></i> 8. Como avalia o atendimento da equipe da Unimed no evento?</label>
-        <select class="form-select" name="atendimento" required>
-          <option value="">Selecione</option>
-          <option>Péssimo</option>
-          <option>Ruim</option>
-          <option>Regular</option>
-          <option>Bom</option>
-          <option>Excelente</option>
-        </select>
-        <div class="d-flex gap-2 mt-3">
-          <button type="button" class="btn btn-secondary back-btn" data-prev-step="7">Voltar</button>
-          <button type="button" class="btn btn-primary next-btn">Próximo</button>
-        </div>
-      </div>
-
-      <div class="question" data-step="9" data-name="Expectativas">
-        <label class="form-label"><i class="fas fa-bullseye"></i> 9. O evento atendeu às suas expectativas?</label>
-        <select class="form-select" name="expectativas" required>
-          <option value="">Selecione</option>
-          <option>Sim</option>
-          <option>Parcialmente</option>
-          <option>Não</option>
-        </select>
-        <div class="d-flex gap-2 mt-3">
-          <button type="button" class="btn btn-secondary back-btn" data-prev-step="8">Voltar</button>
-          <button type="button" class="btn btn-primary next-btn">Próximo</button>
-        </div>
-      </div>
-
-      <div class="question" data-step="10" data-name="Sugestões">
-        <label class="form-label"><i class="fas fa-comment-dots"></i> 10. Deixe suas sugestões para próximos eventos:</label>
-        <textarea class="form-control" name="sugestoes" rows="3"></textarea>
-        <div class="d-flex gap-2 mt-3">
-          <button type="button" class="btn btn-secondary back-btn" data-prev-step="9">Voltar</button>
-          <button type="submit" class="btn btn-success">Enviar Respostas</button>
-        </div>
-      </div>
-    </form>
+    <h1>Pesquisa de Satisfação 🥳</h1>
+    <h2>Evento: Dia dos Médicos | Sua Opinião é Vital!</h2>
   </div>
 
-  <script>
-    // ✅ URL 1: SCRIPT DE ENVIO DO FORMULÁRIO (o seu antigo script, que tem o doPost)
-    const SUBMISSION_APP_URL = "https://script.google.com/macros/s/AKfycbzAAuZKhD5M5V7RmUONvYGHlKp3Gq9E6pQ57nZnMDX-JV2Uphz86hPdwRykeIIX6PtM6g/exec";
-
-    // ✅ URL 2: NOVO SCRIPT DE VALIDAÇÃO DE CPF (o script que faz o lookup GET)
-    const CPF_LOOKUP_URL = "https://script.google.com/macros/s/AKfycbxv-XmgF5ldoXYNLdZU-VduuuqFPhmhEfa3ipm5OIZEATaLKhvXkAt9N1sOfPYR-Ds4lQ/exec";
-
-    const cpfInput = document.getElementById('cpf_participante');
-    const nomeInput = document.getElementById('nome_participante');
-    const cpfStatusText = document.getElementById('cpf-status-text');
-    const questions = document.querySelectorAll('.question');
-    const progressBar = document.getElementById('progress-bar');
-    const totalSteps = 10;
-
-    function showStep(step) {
-      questions.forEach(q => q.classList.remove('active'));
-      const el = document.querySelector(`.question[data-step="${step}"]`);
-      if (el) el.classList.add('active');
-      
-      const progress = ((step - 1) / totalSteps) * 100;
-      progressBar.style.width = `${progress}%`;
-    }
-
-    // ✅ Preenchimento automático Nome via CPF (Usando o script dedicado)
-    async function lookupCpf(cpf) {
-      cpfStatusText.textContent = 'Pesquisando na lista de cooperados...';
-      cpfStatusText.className = 'loading';
-      nomeInput.value = '';
-
-      try {
-        const res = await fetch(`${CPF_LOOKUP_URL}?action=lookup&cpf=${cpf}`);
-        
-        if (!res.ok) {
-            // Se a resposta HTTP falhar (erro de servidor)
-            throw new Error(`Erro HTTP: ${res.status}`);
-        }
-        
-        const data = await res.json();
-        
-        if (data.found) {
-          cpfStatusText.innerHTML = `<i class="fas fa-check-circle"></i> Médico encontrado: <span class="found">${data.name}</span>`;
-          cpfStatusText.className = 'found';
-          nomeInput.value = data.name; 
-          return true;
-        } else {
-          cpfStatusText.innerHTML = `<i class="fas fa-exclamation-triangle"></i> CPF não encontrado. Por favor, preencha o nome no próximo passo.`;
-          cpfStatusText.className = 'notfound';
-          return true; // Permite o avanço
-        }
-      } catch (e) {
-        console.error("Erro na comunicação com o GAS:", e);
-        // Este erro geralmente indica que o CORS foi bloqueado, ou seja, o script GAS não enviou o header
-        cpfStatusText.innerHTML = `<i class="fas fa-times-circle"></i> **ERRO CRÍTICO (CORS/Deploy)**. Tente novamente e verifique o console.`;
-        cpfStatusText.className = 'notfound';
-        return false;
-      }
-    }
-
-    cpfInput.addEventListener('input', e => {
-      const raw = e.target.value.replace(/\D/g, '').substring(0, 11);
-      e.target.value = raw;
-      if (raw.length === 11) lookupCpf(raw);
-      else cpfStatusText.textContent = 'Aguardando 11 dígitos...';
-    });
-
-    // Ação do botão "Próximo" na Pergunta 1 (CPF)
-    document.getElementById('next-q1').addEventListener('click', async () => {
-      const rawCpf = cpfInput.value.replace(/\D/g, '');
-      
-      if (rawCpf.length !== 11) {
-        alert('Por favor, digite um CPF válido com 11 dígitos.');
-        cpfInput.focus();
-        return;
-      }
-      
-      const canAdvance = await lookupCpf(rawCpf);
-
-      if (canAdvance) {
-         showStep(2); // Avança para a pergunta do Nome
-      } else {
-        alert('Não foi possível verificar o CPF. Tente novamente.');
-      }
-    });
+  <form id="pesquisaForm">
     
-    // Ação do botão "Próximo" na Pergunta 2 (Nome)
-    document.getElementById('next-q2').addEventListener('click', () => {
-        if (nomeInput.value.trim() === '') {
-            alert('Por favor, digite seu nome completo para continuar.');
-            nomeInput.focus();
-            return;
-        }
-        showStep(3);
-    });
+    <div class="form-group identification" id="identificacao-step">
+      <label for="cpf">1. 📄 Digite seu CPF:</label>
+      <input type="text" id="cpf" placeholder="000.000.000-00" required>
+      <div class="message error" id="erro-cpf"></div>
+      <div class="loading" id="loading-cpf">Buscando...</div>
+      <p id="nomeMedicoDisplay"></p>
+      <button type="button" class="btn-action" id="btn-buscar">Próximo</button>
+    </div>
     
-    // Lógica para avançar as perguntas genéricas (3 a 10)
-    document.querySelectorAll('.next-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const currentStep = parseInt(btn.closest('.question').dataset.step);
+    <div id="pesquisa-step" class="hidden-content">
+      <input type="hidden" id="nome-medico" name="nome-medico">
+      <input type="hidden" id="cpf-medico" name="cpf-medico">
+
+      <h3>Avalie o Evento</h3>
+
+      <div class="form-group">
+        <label>2. Como você avalia a organização geral do evento?</label>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" id="p1-pessimo" name="pergunta1" value="Péssimo" required>
+            <label for="p1-pessimo">Péssimo</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p1-ruim" name="pergunta1" value="Ruim">
+            <label for="p1-ruim">Ruim</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p1-regular" name="pergunta1" value="Regular">
+            <label for="p1-regular">Regular</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p1-bom" name="pergunta1" value="Bom">
+            <label for="p1-bom">Bom</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p1-excelente" name="pergunta1" value="Excelente">
+            <label for="p1-excelente">Excelente</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>3. Como avalia a qualidade do local/estrutura do evento?</label>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" id="p2-pessimo" name="pergunta2" value="Péssimo" required>
+            <label for="p2-pessimo">Péssimo</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p2-ruim" name="pergunta2" value="Ruim">
+            <label for="p2-ruim">Ruim</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p2-regular" name="pergunta2" value="Regular">
+            <label for="p2-regular">Regular</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p2-bom" name="pergunta2" value="Bom">
+            <label for="p2-bom">Bom</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p2-excelente" name="pergunta2" value="Excelente">
+            <label for="p2-excelente">Excelente</label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>4. Como você avalia a qualidade da comida servida?</label>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" id="p3-pessimo" name="pergunta3" value="Péssimo" required>
+            <label for="p3-pessimo">Péssimo</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p3-ruim" name="pergunta3" value="Ruim">
+            <label for="p3-ruim">Ruim</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p3-regular" name="pergunta3" value="Regular">
+            <label for="p3-regular">Regular</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p3-bom" name="pergunta3" value="Bom">
+            <label for="p3-bom">Bom</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p3-excelente" name="pergunta3" value="Excelente">
+            <label for="p3-excelente">Excelente</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>5. Como avalia as bebidas servidas?</label>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" id="p4-pessimo" name="pergunta4" value="Péssimo" required>
+            <label for="p4-pessimo">Péssimo</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p4-ruim" name="pergunta4" value="Ruim">
+            <label for="p4-ruim">Ruim</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p4-regular" name="pergunta4" value="Regular">
+            <label for="p4-regular">Regular</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p4-bom" name="pergunta4" value="Bom">
+            <label for="p4-bom">Bom</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p4-excelente" name="pergunta4" value="Excelente">
+            <label for="p4-excelente">Excelente</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>6. Como você avalia a música/entretenimento?</label>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" id="p5-pessimo" name="pergunta5" value="Péssimo" required>
+            <label for="p5-pessimo">Péssimo</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p5-ruim" name="pergunta5" value="Ruim">
+            <label for="p5-ruim">Ruim</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p5-regular" name="pergunta5" value="Regular">
+            <label for="p5-regular">Regular</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p5-bom" name="pergunta5" value="Bom">
+            <label for="p5-bom">Bom</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p5-excelente" name="pergunta5" value="Excelente">
+            <label for="p5-excelente">Excelente</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>7. Como avalia o conteúdo e a performance do palestrante?</label>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" id="p6-pessimo" name="pergunta6" value="Péssimo" required>
+            <label for="p6-pessimo">Péssimo</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p6-ruim" name="pergunta6" value="Ruim">
+            <label for="p6-ruim">Ruim</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p6-regular" name="pergunta6" value="Regular">
+            <label for="p6-regular">Regular</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p6-bom" name="pergunta6" value="Bom">
+            <label for="p6-bom">Bom</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="p6-excelente" name="pergunta6" value="Excelente">
+            <label for="p6-excelente">Excelente</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="melhoria">8. O que poderia ser melhorado para os próximos eventos?</label>
+        <textarea id="melhoria" name="pergunta7" rows="4" placeholder="Deixe suas sugestões... (Opcional)"></textarea>
+      </div>
+
+      <button type="submit" class="btn-action" id="btn-enviar">✅ Enviar Pesquisa</button>
+      <div class="loading" id="loading-envio">Enviando Respostas...</div>
+    </div>
+  </form>
+  
+  <div class="message success" id="sucesso-msg">
+    **Obrigado!** Sua avaliação foi enviada com sucesso. A Unimed Araguaia agradece seu feedback.
+  </div>
+
+</div>
+
+<script>
+  // A LÓGICA JAVASCRIPT PERMANECE IGUAL
+  
+  // Função de máscara de CPF
+  function formatCPF(v) {
+    v = v.replace(/\D/g, ""); 
+    v = v.replace(/(\d{3})(\d)/, "$1.$2"); 
+    v = v.replace(/(\d{3})(\d)/, "$1.$2"); 
+    v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2"); 
+    return v;
+  }
+  
+  document.getElementById('cpf').addEventListener('input', function(e) {
+    e.target.value = formatCPF(e.target.value);
+  });
+
+  document.getElementById('btn-buscar').addEventListener('click', function() {
+    const cpfInput = document.getElementById('cpf');
+    const cpf = cpfInput.value;
+    const loading = document.getElementById('loading-cpf');
+    const nomeDisplay = document.getElementById('nomeMedicoDisplay');
+    const erroDisplay = document.getElementById('erro-cpf');
+    const btnBuscar = this;
+
+    // Limpa estados anteriores
+    nomeDisplay.style.display = 'none';
+    erroDisplay.style.display = 'none';
+    document.getElementById('pesquisa-step').classList.add('hidden-content');
+    
+    // Validação básica do formato (se tem 14 caracteres com a máscara)
+    if (cpf.length < 14) {
+      erroDisplay.innerText = '⚠️ Por favor, digite um CPF válido e completo.';
+      erroDisplay.style.display = 'block';
+      return;
+    }
+    
+    btnBuscar.disabled = true;
+    loading.style.display = 'block';
+
+    // Chama a função Apps Script para buscar o nome
+    google.script.run
+        .withSuccessHandler(function(response) {
+            loading.style.display = 'none';
+            btnBuscar.disabled = false;
             
-            const selectField = btn.closest('.question').querySelector('select');
-            if (selectField && selectField.value === '') {
-                alert('Por favor, selecione uma opção para continuar.');
-                return; 
+            if (response.status === 'sucesso') {
+                const nome = response.nome;
+                nomeDisplay.innerHTML = `✅ Olá, **Dr(a). ${nome}**! Sua identificação foi confirmada.`;
+                nomeDisplay.style.display = 'block';
+                
+                // Preenche os campos hidden e mostra a pesquisa
+                document.getElementById('nome-medico').value = nome;
+                document.getElementById('cpf-medico').value = cpf;
+                document.getElementById('pesquisa-step').classList.remove('hidden-content');
+                document.getElementById('identificacao-step').style.backgroundColor = 'var(--unimed-verde-claro)'; // Destaque suave
+                document.getElementById('identificacao-step').style.borderColor = 'var(--unimed-verde-principal)';
+
+
+                // Rolagem para o início da pesquisa
+                document.getElementById('pesquisa-step').scrollIntoView({ behavior: 'smooth' });
+
+            } else {
+                erroDisplay.innerText = '❌ ' + response.mensagem;
+                erroDisplay.style.display = 'block';
+                document.getElementById('identificacao-step').style.backgroundColor = '#fff'; // Volta para branco em caso de erro
             }
+        })
+        .withFailureHandler(function(error) {
+            loading.style.display = 'none';
+            btnBuscar.disabled = false;
+            erroDisplay.innerText = '❌ Erro de comunicação. Tente novamente ou confira o ID da planilha no script.';
+            erroDisplay.style.display = 'block';
+            console.error(error);
+        })
+        .buscarMedicoPorCPF(cpf);
+  });
+
+  document.getElementById('pesquisaForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const dados = {};
+    const btnEnviar = document.getElementById('btn-enviar');
+    const loadingEnvio = document.getElementById('loading-envio');
+    const sucessoMsg = document.getElementById('sucesso-msg');
+
+    // Mapeamento dos dados do formulário
+    dados.cpf = form.elements['cpf-medico'].value;
+    dados.nome = form.elements['nome-medico'].value;
+    dados.pergunta1 = form.elements['pergunta1'].value;
+    dados.pergunta2 = form.elements['pergunta2'].value;
+    dados.pergunta3 = form.elements['pergunta3'].value;
+    dados.pergunta4 = form.elements['pergunta4'].value;
+    dados.pergunta5 = form.elements['pergunta5'].value;
+    dados.pergunta6 = form.elements['pergunta6'].value;
+    dados.pergunta7 = form.elements['pergunta7'].value;
+
+    btnEnviar.disabled = true;
+    loadingEnvio.style.display = 'block';
+
+    // Chama a função Apps Script para gravar as respostas
+    google.script.run
+        .withSuccessHandler(function(response) {
+            loadingEnvio.style.display = 'none';
             
-            showStep(currentStep + 1);
-        });
-    });
+            if (response.status === 'sucesso') {
+                // Esconde o formulário e mostra a mensagem de sucesso
+                document.getElementById('pesquisa-step').style.display = 'none';
+                document.getElementById('identificacao-step').style.display = 'none';
+                sucessoMsg.style.display = 'block';
+                document.body.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert('Ocorreu um erro ao enviar a pesquisa. Tente novamente. Detalhe: ' + response.mensagem);
+                btnEnviar.disabled = false;
+            }
+        })
+        .withFailureHandler(function(error) {
+            loadingEnvio.style.display = 'none';
+            btnEnviar.disabled = false;
+            alert('Erro de comunicação com o servidor. Tente novamente.');
+            console.error(error);
+        })
+        .gravarRespostas(dados);
+  });
+</script>
 
-    // Lógica para voltar
-    document.querySelectorAll('.back-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const prevStep = parseInt(btn.dataset.prevStep);
-        showStep(prevStep);
-      });
-    });
-
-    // Lógica de Envio do Formulário (doPost request)
-    document.getElementById('survey-form').addEventListener('submit', async e => {
-      e.preventDefault();
-      
-      const form = e.target;
-      const formData = new FormData(form);
-      const data = {};
-      
-      formData.forEach((value, key) => (data[key] = value));
-      
-      try {
-          // Usa a URL de SUBMISSÃO!
-          const response = await fetch(SUBMISSION_APP_URL, {
-              method: 'POST',
-              mode: 'cors', 
-              cache: 'no-cache',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(data)
-          });
-
-          if (!response.ok) {
-              throw new Error(`Erro ao enviar: ${response.status}`);
-          }
-          
-          const result = await response.json();
-
-          if (result.result === 'success') {
-              alert("Pesquisa enviada com sucesso! Obrigado por sua participação.");
-              form.reset();
-              showStep(1);
-          } else {
-              alert(`Falha ao registrar a resposta: ${result.message}`);
-          }
-          
-      } catch (error) {
-          console.error("Erro no envio:", error);
-          alert("Houve um erro de comunicação ao enviar sua resposta. Tente novamente.");
-      }
-    });
-
-    showStep(1);
-  </script>
 </body>
 </html>
