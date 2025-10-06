@@ -325,8 +325,8 @@
     <script src="data_service.js"></script>
 
     <script>
-        // URL ORIGINAL DO SEU GOOGLE APP SCRIPT (Mantida apenas para o envio final do formulário)
-        let WEB_APP_URL = "https://script.google.com/macros/s/AKfycbygJaT3mJ67OsK5SVnNbQP17Be7Zc5GKQ6o_MRm5gkZ17oCulm3R0QQza5_la25m13egQ/exec";
+        // URL DO SEU GOOGLE APP SCRIPT (INSERIDA A URL FORNECIDA PELO USUÁRIO)
+        let WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwRZVHDK2wT3qf-5eHXcGyQgel9q1Nbqe1YDbbprIKnc3yyteCMtoOnY6rpkwopNWoE1Q/exec";
 
         const cpfInput = document.getElementById('cpf_participante');
         const nomeInput = document.getElementById('nome_participante');
@@ -334,7 +334,7 @@
         const questions = document.querySelectorAll('.question');
         const progressBar = document.getElementById('progress-bar');
         const summaryContent = document.getElementById('summary-content');
-        const totalSteps = 10; // Total de passos (2 dados pessoais + 7 perguntas + 1 resumo)
+        const totalSteps = 10; 
 
         let cpfFound = false; 
 
@@ -441,6 +441,7 @@
             await new Promise(resolve => setTimeout(resolve, 300)); 
 
             try {
+                // Supondo que lookupCpfFromDatabase está definido em data_service.js
                 const data = window.lookupCpfFromDatabase(cpf); 
                 
                 if (data.found) {
@@ -453,7 +454,7 @@
                     cpfStatusText.innerHTML = `<i class="fas fa-exclamation-triangle"></i> CPF não encontrado. Por favor, corrija ou preencha o nome no próximo passo.`;
                     cpfStatusText.className = 'notfound';
                     cpfFound = false;
-                    return true; 
+                    return true; // Permite avançar mesmo sem encontrar, mas pede o nome
                 }
             } catch (e) {
                 console.error("Erro na busca local do CPF:", e);
@@ -536,26 +537,59 @@
             });
         });
 
-        // Lógica de Envio do Formulário (Simulação)
-        document.getElementById('survey-form').addEventListener('submit', e => {
+        // Lógica de Envio do Formulário CONECTADA AO SHEETS
+        document.getElementById('survey-form').addEventListener('submit', async e => {
             e.preventDefault();
+
+            const submitButton = document.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+
+            const form = e.target;
+            const formData = new FormData(form);
             
-            // SIMULAÇÃO DE ENVIO COM TELA DE SUCESSO
-            const currentTitle = document.querySelector('h2').textContent;
-            document.querySelector('.survey-container').innerHTML = `
-                <img src="https://www.unimed.coop.br/site/image/layout_set_logo?img_id=23193551&t=1759328081981" class="logo mb-3" alt="Logo Unimed Araguaia">
-                <h2 style="color: var(--unimed-green);">${currentTitle}</h2>
-                <h3 class="text-success" style="font-weight: 700; margin-top: 30px;">
-                    <i class="fas fa-heart"></i> Pesquisa Finalizada com Sucesso!
-                </h3>
-                <p style="font-size: 1.1rem; color: var(--unimed-text-dark); margin-top: 20px;">
-                    Agradecemos imensamente a sua participação e feedback. Sua opinião é vital para melhorarmos nossos próximos eventos.
-                </p>
-                <button class="btn btn-primary mt-4" onclick="window.location.reload();">
-                    <i class="fas fa-redo"></i> Iniciar Nova Pesquisa
-                </button>
-            `;
-            
+            // Converte os dados do formulário para o formato URLSearchParams
+            const params = new URLSearchParams(formData);
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: params
+                });
+
+                // O Apps Script retorna JSON
+                const result = await response.json();
+                
+                if (result.status === 'SUCCESS') {
+                    // SUCESSO: Exibe a mensagem final
+                    const currentTitle = document.querySelector('h2').textContent;
+                    document.querySelector('.survey-container').innerHTML = `
+                        <img src="https://www.unimed.coop.br/site/image/layout_set_logo?img_id=23193551&t=1759328081981" class="logo mb-3" alt="Logo Unimed Araguaia">
+                        <h2 style="color: var(--unimed-green);">${currentTitle}</h2>
+                        <h3 class="text-success" style="font-weight: 700; margin-top: 30px;">
+                            <i class="fas fa-heart"></i> Pesquisa Finalizada com Sucesso!
+                        </h3>
+                        <p style="font-size: 1.1rem; color: var(--unimed-text-dark); margin-top: 20px;">
+                            Agradecemos imensamente a sua participação e feedback. Sua opinião é vital para melhorarmos nossos próximos eventos.
+                        </p>
+                        <button class="btn btn-primary mt-4" onclick="window.location.reload();">
+                            <i class="fas fa-redo"></i> Iniciar Nova Pesquisa
+                        </button>
+                    `;
+                } else {
+                    // FALHA NO SCRIPT: Mostra alerta de erro
+                    alert('Erro ao enviar dados para a planilha: ' + result.message);
+                    console.error('Apps Script Error:', result.message);
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Respostas';
+                }
+            } catch (error) {
+                // FALHA DE CONEXÃO: Mostra alerta de erro
+                alert('Erro de conexão ou rede. Verifique a URL do Apps Script.');
+                console.error('Network or Fetch Error:', error);
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Respostas';
+            }
         });
 
         // Inicializa no primeiro passo
