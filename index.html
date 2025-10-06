@@ -96,9 +96,8 @@
     .cpf-status {
       margin-top: 10px;
       font-size: 0.9rem;
-      font-weight: 500;
     }
-    .cpf-status .found {color: var(--unimed-green); font-weight: 700;}
+    .cpf-status .found {color: var(--unimed-green);}
     .cpf-status .notfound {color: #dc3545;}
     .cpf-status .loading {color: #0d6efd;}
   </style>
@@ -119,7 +118,7 @@
         <label class="form-label"><i class="fas fa-id-card"></i> 1. Digite seu CPF:</label>
         <input type="tel" class="form-control" name="cpf_participante" id="cpf_participante" placeholder="Somente números" maxlength="11" required>
         <div class="cpf-status" id="cpf-status">
-          <i class="fas fa-search"></i> <span id="cpf-status-text">Aguardando 11 dígitos...</span>
+          <i class="fas fa-search"></i> <span id="cpf-status-text">Aguardando CPF...</span>
         </div>
         <button type="button" class="btn btn-primary mt-3" id="next-q1">Próximo</button>
       </div>
@@ -145,7 +144,7 @@
         </select>
         <div class="d-flex gap-2 mt-3">
           <button type="button" class="btn btn-secondary back-btn" data-prev-step="2">Voltar</button>
-          <button type="button" class="btn btn-primary next-btn" data-next-step="4">Próximo</button>
+          <button type="button" class="btn btn-primary next-btn">Próximo</button>
         </div>
       </div>
 
@@ -161,7 +160,7 @@
         </select>
         <div class="d-flex gap-2 mt-3">
           <button type="button" class="btn btn-secondary back-btn" data-prev-step="3">Voltar</button>
-          <button type="button" class="btn btn-primary next-btn" data-next-step="5">Próximo</button>
+          <button type="button" class="btn btn-primary next-btn">Próximo</button>
         </div>
       </div>
 
@@ -177,7 +176,7 @@
         </select>
         <div class="d-flex gap-2 mt-3">
           <button type="button" class="btn btn-secondary back-btn" data-prev-step="4">Voltar</button>
-          <button type="button" class="btn btn-primary next-btn" data-next-step="6">Próximo</button>
+          <button type="button" class="btn btn-primary next-btn">Próximo</button>
         </div>
       </div>
 
@@ -193,7 +192,7 @@
         </select>
         <div class="d-flex gap-2 mt-3">
           <button type="button" class="btn btn-secondary back-btn" data-prev-step="5">Voltar</button>
-          <button type="button" class="btn btn-primary next-btn" data-next-step="7">Próximo</button>
+          <button type="button" class="btn btn-primary next-btn">Próximo</button>
         </div>
       </div>
 
@@ -209,7 +208,7 @@
         </select>
         <div class="d-flex gap-2 mt-3">
           <button type="button" class="btn btn-secondary back-btn" data-prev-step="6">Voltar</button>
-          <button type="button" class="btn btn-primary next-btn" data-next-step="8">Próximo</button>
+          <button type="button" class="btn btn-primary next-btn">Próximo</button>
         </div>
       </div>
 
@@ -225,7 +224,7 @@
         </select>
         <div class="d-flex gap-2 mt-3">
           <button type="button" class="btn btn-secondary back-btn" data-prev-step="7">Voltar</button>
-          <button type="button" class="btn btn-primary next-btn" data-next-step="9">Próximo</button>
+          <button type="button" class="btn btn-primary next-btn">Próximo</button>
         </div>
       </div>
 
@@ -239,7 +238,7 @@
         </select>
         <div class="d-flex gap-2 mt-3">
           <button type="button" class="btn btn-secondary back-btn" data-prev-step="8">Voltar</button>
-          <button type="button" class="btn btn-primary next-btn" data-next-step="10">Próximo</button>
+          <button type="button" class="btn btn-primary next-btn">Próximo</button>
         </div>
       </div>
 
@@ -255,86 +254,66 @@
   </div>
 
   <script>
-    // ✅ URL DO SEU GOOGLE APP SCRIPT
-    let WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzQlOEohjUarwAOLzeUOuneFuXXogJv3LfxoWv6JBWDhDybtLpM4579iY1XLEiIBe_Y-A/exec";
+    // ✅ URL 1: SCRIPT DE ENVIO DO FORMULÁRIO (o seu antigo script, que tem o doPost)
+    const SUBMISSION_APP_URL = "https://script.google.com/macros/s/AKfycbzAAuZKhD5M5V7RmUONvYGHlKp3Gq9E6pQ57nZnMDX-JV2Uphz86hPdwRykeIIX6PtM6g/exec";
+
+    // ✅ URL 2: NOVO SCRIPT DE VALIDAÇÃO DE CPF (o novo script com a função doGet)
+    const CPF_LOOKUP_URL = "https://script.google.com/macros/s/AKfycbxv-XmgF5ldoXYNLdZU-VduuuqFPhmhEfa3ipm5OIZEATaLKhvXkAt9N1sOfPYR-Ds4lQ/exec";
 
     const cpfInput = document.getElementById('cpf_participante');
     const nomeInput = document.getElementById('nome_participante');
     const cpfStatusText = document.getElementById('cpf-status-text');
     const questions = document.querySelectorAll('.question');
     const progressBar = document.getElementById('progress-bar');
-    const totalSteps = 10; // Total de perguntas na pesquisa
+    const totalSteps = 10;
 
-    let cpfFound = false; // Variável para controlar se o CPF foi encontrado
-
-    /**
-     * Exibe o passo (pergunta) atual e atualiza a barra de progresso.
-     * @param {number} step - O número do passo a ser exibido (1 a 10).
-     */
     function showStep(step) {
-      const currentStep = parseInt(document.querySelector('.question.active')?.dataset.step || '1');
-      
-      // Validação de segurança simples
-      if (step < 1 || step > totalSteps) return;
-
       questions.forEach(q => q.classList.remove('active'));
       const el = document.querySelector(`.question[data-step="${step}"]`);
       if (el) el.classList.add('active');
-
-      // Calcula o progresso (ex: passo 1 de 10 = 0%; passo 2 de 10 = 10%... passo 10 de 10 = 90%)
+      
       const progress = ((step - 1) / totalSteps) * 100;
       progressBar.style.width = `${progress}%`;
     }
 
-    /**
-     * Pesquisa o CPF na planilha via Google App Script.
-     * @param {string} cpf - O CPF (somente números).
-     * @returns {Promise<boolean>} Retorna true se o CPF for válido para avanço, false caso contrário.
-     */
+    // ✅ Preenchimento automático Nome via CPF (Usando o script dedicado)
     async function lookupCpf(cpf) {
       cpfStatusText.textContent = 'Pesquisando na lista de cooperados...';
       cpfStatusText.className = 'loading';
-      cpfFound = false;
-      nomeInput.value = ''; // Limpa o nome enquanto pesquisa
+      nomeInput.value = '';
 
       try {
-        const res = await fetch(`${WEB_APP_URL}?action=lookup&cpf=${cpf}`);
+        const res = await fetch(`${CPF_LOOKUP_URL}?action=lookup&cpf=${cpf}`);
+        
+        if (!res.ok) {
+            throw new Error(`Erro HTTP: ${res.status}`);
+        }
+        
         const data = await res.json();
         
         if (data.found) {
           cpfStatusText.innerHTML = `<i class="fas fa-check-circle"></i> Médico encontrado: <span class="found">${data.name}</span>`;
           cpfStatusText.className = 'found';
-          nomeInput.value = data.name; // Preenche o nome automaticamente
-          cpfFound = true;
-          return true; // CPF encontrado
+          nomeInput.value = data.name; // Preenche o nome
+          return true;
         } else {
-          cpfStatusText.innerHTML = `<i class="fas fa-exclamation-triangle"></i> CPF não encontrado. Por favor, corrija ou preencha o nome no próximo passo.`;
+          cpfStatusText.innerHTML = `<i class="fas fa-exclamation-triangle"></i> CPF não encontrado. Por favor, preencha o nome no próximo passo.`;
           cpfStatusText.className = 'notfound';
-          cpfFound = false;
-          return true; // Permitir avanço, mas sem preenchimento automático
+          return true; // Permite o avanço
         }
       } catch (e) {
         console.error("Erro na comunicação com o GAS:", e);
-        cpfStatusText.textContent = 'Erro de comunicação. Tente novamente.';
+        cpfStatusText.innerHTML = `<i class="fas fa-times-circle"></i> **ERRO DE COMUNICAÇÃO**. Verifique o Console (F12).`;
         cpfStatusText.className = 'notfound';
-        return false; // Bloquear avanço em caso de erro crítico
+        return false;
       }
     }
 
-    // Ações ao digitar no campo CPF
     cpfInput.addEventListener('input', e => {
-      // Limpa e formata o CPF
       const raw = e.target.value.replace(/\D/g, '').substring(0, 11);
-      e.target.value = raw; // Força a exibição apenas de números (até 11)
-      
-      if (raw.length === 11) {
-        // Quando 11 dígitos são atingidos, dispara a pesquisa automática
-        lookupCpf(raw);
-      } else {
-        cpfStatusText.textContent = 'Aguardando 11 dígitos...';
-        cpfStatusText.className = '';
-        cpfFound = false;
-      }
+      e.target.value = raw;
+      if (raw.length === 11) lookupCpf(raw);
+      else cpfStatusText.textContent = 'Aguardando 11 dígitos...';
     });
 
     // Ação do botão "Próximo" na Pergunta 1 (CPF)
@@ -346,10 +325,10 @@
         cpfInput.focus();
         return;
       }
-
-      // Garante que o lookup ocorreu antes de avançar
-      const canAdvance = await lookupCpf(rawCpf);
       
+      // Aguarda a confirmação do lookup antes de avançar
+      const canAdvance = await lookupCpf(rawCpf);
+
       if (canAdvance) {
          showStep(2); // Avança para a pergunta do Nome
       } else {
@@ -366,12 +345,11 @@
         }
         showStep(3);
     });
-
+    
     // Lógica para avançar as perguntas genéricas (3 a 10)
     document.querySelectorAll('.next-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const currentStep = parseInt(btn.closest('.question').dataset.step);
-            const nextStep = currentStep + 1;
             
             // Simples validação para campos de seleção
             const selectField = btn.closest('.question').querySelector('select');
@@ -380,7 +358,7 @@
                 return; 
             }
             
-            showStep(nextStep);
+            showStep(currentStep + 1);
         });
     });
 
@@ -392,12 +370,51 @@
       });
     });
 
-    // Lógica de Envio do Formulário
-    document.getElementById('survey-form').addEventListener('submit', e => {
+    // Lógica de Envio do Formulário (doPost request)
+    document.getElementById('survey-form').addEventListener('submit', async e => {
       e.preventDefault();
-      // O código de envio real para o Google App Script deve ser implementado aqui
-      // (Coletar dados, fazer o POST/GET para o WEB_APP_URL, e mostrar a tela de sucesso)
-      alert("Sucesso! O formulário está pronto para ser conectado ao Google App Script.");
+      
+      const form = e.target;
+      const formData = new FormData(form);
+      const data = {};
+      
+      // Converte FormData para objeto JSON
+      formData.forEach((value, key) => (data[key] = value));
+      
+      // Remove os campos de navegação que não são respostas
+      // (O nome e CPF serão enviados no POST, não precisam ser excluídos)
+
+      // O GAS espera os dados em JSON dentro do POST body
+      try {
+          // *** Usa a URL de SUBMISSÃO! ***
+          const response = await fetch(SUBMISSION_APP_URL, {
+              method: 'POST',
+              mode: 'cors', // Necessário para evitar o CORS
+              cache: 'no-cache',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+          });
+
+          if (!response.ok) {
+              throw new Error(`Erro ao enviar: ${response.status}`);
+          }
+          
+          const result = await response.json();
+
+          if (result.result === 'success') {
+              alert("Pesquisa enviada com sucesso! Obrigado por sua participação.");
+              form.reset();
+              showStep(1);
+          } else {
+              alert(`Falha ao registrar a resposta: ${result.message}`);
+          }
+          
+      } catch (error) {
+          console.error("Erro no envio:", error);
+          alert("Houve um erro de comunicação ao enviar sua resposta. Tente novamente.");
+      }
     });
 
     // Inicializa no primeiro passo
@@ -405,5 +422,3 @@
   </script>
 </body>
 </html>
-
-
